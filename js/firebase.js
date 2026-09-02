@@ -11,19 +11,13 @@ import {
 // TODO: substitua pelos dados do SEU projeto Firebase
 // (Console Firebase > Configurações do projeto > Seus apps > Config)
 const firebaseConfig = {
-
-    apiKey: "SUA_API_KEY",
-
-    authDomain: "SEU_PROJETO.firebaseapp.com",
-
-    projectId: "SEU_PROJETO",
-
-    storageBucket: "SEU_PROJETO.firebasestorage.app",
-
-    messagingSenderId: "SEU_SENDER_ID",
-
-    appId: "SEU_APP_ID"
-
+  apiKey: "AIzaSyBICmngpJjK2yo3yd-GDVQI_dq2I-ccTdg",
+  authDomain: "minhaestante-5b574.firebaseapp.com",
+  projectId: "minhaestante-5b574",
+  storageBucket: "minhaestante-5b574.firebasestorage.app",
+  messagingSenderId: "374856236186",
+  appId: "1:374856236186:web:a21e7de086606a0c2e3323",
+  measurementId: "G-JVHK19590M"
 };
 
 const app = initializeApp(firebaseConfig);

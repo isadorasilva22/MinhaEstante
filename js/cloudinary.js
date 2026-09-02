@@ -1,8 +1,8 @@
 // TODO: substitua pelos dados da SUA conta Cloudinary
 // (Dashboard > Cloud name) e por um Upload Preset "unsigned" criado em
 // Settings > Upload > Upload presets
-const CLOUD_NAME = "SEU_CLOUD_NAME";
-const UPLOAD_PRESET = "SEU_UPLOAD_PRESET";
+const CLOUD_NAME = "jgrpoeqb";
+const UPLOAD_PRESET = "MinhaEstante";
 
 export async function uploadImagem(arquivo) {
 
