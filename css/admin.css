@@ -159,14 +159,50 @@ display:none;
 
 }
 
-#preview{
+.fotosPreview{
 
-margin-top:10px;
-width:220px;
-height:280px;
-align-self:center;
+display:flex;
+flex-wrap:wrap;
+gap:12px;
+
+}
+
+.fotoPendente{
+
+position:relative;
+width:90px;
+height:120px;
+border-radius:10px;
+overflow:hidden;
+background:var(--creme);
+
+}
+
+.fotoPendente img{
+
+width:100%;
+height:100%;
 object-fit:cover;
-border-radius:12px;
+
+}
+
+.btnRemoverFoto{
+
+position:absolute;
+top:4px;
+right:4px;
+margin:0;
+padding:0;
+width:22px;
+height:22px;
+border-radius:50%;
+background:var(--erro);
+color:var(--branco);
+font-size:12px;
+line-height:1;
+display:flex;
+align-items:center;
+justify-content:center;
 
 }
 

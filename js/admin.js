@@ -13,6 +13,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 
 import { uploadImagem } from "./cloudinary.js";
+import { removerFundo } from "./remover-fundo.js";
 
 const STATUS_LABEL = {
     "quero-ler": "Quero Ler",
@@ -32,8 +33,8 @@ const inputGenero = document.getElementById("genero");
 const inputStatus = document.getElementById("status");
 const inputNota = document.getElementById("nota");
 const estrelasInput = document.getElementById("estrelasInput");
-const inputCapa = document.getElementById("capa");
-const preview = document.getElementById("preview");
+const inputFotos = document.getElementById("fotos");
+const fotosPreview = document.getElementById("fotosPreview");
 const status = document.getElementById("statusForm");
 const tituloForm = document.getElementById("tituloForm");
 const botaoSalvar = document.getElementById("btnSalvar");
@@ -67,7 +68,7 @@ let itemEditando = null;
 let itensAtuais = [];
 let generosAtuais = [];
 let donosAtuais = [];
-let uploadPendente = null;
+let fotosPendentes = [];
 let termoPesquisaAdmin = "";
 let notaAtual = 0;
 
@@ -162,43 +163,59 @@ estrelasInput.addEventListener("click", (evento) => {
 renderEstrelasInput();
 
 //------------------------------------------------------------------------------------------
-//	UPLOAD DA CAPA
+//	UPLOAD DAS FOTOS (COM REMOÇÃO DE FUNDO)
 //------------------------------------------------------------------------------------------
 
-inputCapa.addEventListener("change", async () => {
+function renderFotosPreview() {
 
-    const arquivo = inputCapa.files[0];
-    uploadPendente = null;
+    fotosPreview.innerHTML = fotosPendentes.map((foto, indice) => `
+        <div class="fotoPendente">
+            <img src="${foto.url}" onerror="this.onerror=null;this.src='${foto.original}';">
+            <button type="button" class="btnRemoverFoto" data-indice="${indice}" title="Remover foto">&times;</button>
+        </div>
+    `).join("");
 
-    if (!arquivo) {
-        if (!itemEditando) {
-            preview.style.display = "none";
-            nomeArquivo.textContent = "Nenhum arquivo selecionado";
-        }
-        return;
-    }
+}
 
-    nomeArquivo.textContent = arquivo.name;
-    preview.src = URL.createObjectURL(arquivo);
-    preview.style.display = "block";
-    status.textContent = "Enviando capa...";
+fotosPreview.addEventListener("click", (evento) => {
+
+    const botao = evento.target.closest(".btnRemoverFoto");
+    if (!botao) return;
+
+    fotosPendentes.splice(Number(botao.dataset.indice), 1);
+    renderFotosPreview();
+
+});
+
+inputFotos.addEventListener("change", async () => {
+
+    const arquivos = Array.from(inputFotos.files);
+    inputFotos.value = "";
+
+    if (arquivos.length === 0) return;
+
+    status.textContent = `Enviando ${arquivos.length} foto${arquivos.length === 1 ? "" : "s"}...`;
     botaoSalvar.disabled = true;
 
     try {
 
-        const resultadoUpload = await uploadImagem(arquivo);
+        const resultados = await Promise.all(arquivos.map((arquivo) => uploadImagem(arquivo)));
 
-        uploadPendente = {
-            capa: resultadoUpload.secure_url,
-            capaPublicId: resultadoUpload.public_id
-        };
+        resultados.forEach((resultadoUpload) => {
+            fotosPendentes.push({
+                url: removerFundo(resultadoUpload.secure_url),
+                original: resultadoUpload.secure_url,
+                publicId: resultadoUpload.public_id
+            });
+        });
 
-        status.textContent = "Capa enviada. Confira o resultado antes de salvar.";
+        renderFotosPreview();
+        nomeArquivo.textContent = `${fotosPendentes.length} foto${fotosPendentes.length === 1 ? "" : "s"} selecionada${fotosPendentes.length === 1 ? "" : "s"}`;
+        status.textContent = "Fotos enviadas. Confira o resultado antes de salvar.";
 
     } catch (erro) {
         console.error(erro);
-        status.textContent = mensagemErro(erro, "enviar a capa");
-        uploadPendente = null;
+        status.textContent = mensagemErro(erro, "enviar as fotos");
     } finally {
         botaoSalvar.disabled = false;
     }
@@ -211,11 +228,10 @@ inputCapa.addEventListener("change", async () => {
 
 function resetFormParaNovo() {
     itemEditando = null;
-    uploadPendente = null;
+    fotosPendentes = [];
+    renderFotosPreview();
     form.reset();
-    inputCapa.required = true;
-    preview.style.display = "none";
-    nomeArquivo.textContent = "Nenhum arquivo selecionado";
+    nomeArquivo.textContent = "Nenhuma foto selecionada";
     tituloForm.textContent = "Novo Livro";
     botaoSalvar.textContent = "Salvar";
     botaoCancelarEdicao.classList.add("oculto");
@@ -224,20 +240,17 @@ function resetFormParaNovo() {
 
 function iniciarEdicao(item) {
     itemEditando = item;
-    uploadPendente = null;
+    fotosPendentes = (item.fotos || []).slice();
+    renderFotosPreview();
     inputTitulo.value = item.titulo;
     inputAutor.value = item.autor;
     inputDono.value = item.dono;
     inputGenero.value = item.genero;
     inputStatus.value = item.status;
-    inputCapa.value = "";
-    inputCapa.required = false;
     notaAtual = item.nota || 0;
     renderEstrelasInput();
     inputNota.value = notaAtual;
-    nomeArquivo.textContent = "Capa atual mantida (escolha uma nova para substituir)";
-    preview.src = item.capa;
-    preview.style.display = "block";
+    nomeArquivo.textContent = "Escolha novas fotos para adicionar";
     tituloForm.textContent = "Editar Livro";
     botaoSalvar.textContent = "Atualizar";
     botaoCancelarEdicao.classList.remove("oculto");
@@ -288,7 +301,7 @@ function renderLista(itens) {
 
     listaLivros.innerHTML = itens.map((item) => `
         <div class="itemLista">
-            <img src="${item.capa}">
+            <img src="${item.fotos?.[0]?.url}" onerror="this.onerror=null;this.src='${item.fotos?.[0]?.original}';">
             <div class="infoItem">
                 <strong>${item.titulo}</strong>
                 <span>${item.autor} · ${item.dono} · ${item.genero} · ${STATUS_LABEL[item.status] || item.status}</span>
@@ -640,14 +653,8 @@ form.addEventListener("submit", async (evento) => {
         return;
     }
 
-    const arquivo = inputCapa.files[0];
-
-    if (!arquivo && !itemEditando) {
-        return;
-    }
-
-    if (arquivo && !uploadPendente) {
-        status.textContent = "Aguarde o envio da capa terminar antes de salvar.";
+    if (fotosPendentes.length === 0) {
+        status.textContent = "Adicione ao menos uma foto do livro.";
         return;
     }
 
@@ -663,13 +670,9 @@ form.addEventListener("submit", async (evento) => {
             genero: inputGenero.value,
             status: inputStatus.value,
             nota: notaAtual,
-            favorito: itemEditando?.favorito || false
+            favorito: itemEditando?.favorito || false,
+            fotos: fotosPendentes
         };
-
-        if (uploadPendente) {
-            dados.capa = uploadPendente.capa;
-            dados.capaPublicId = uploadPendente.capaPublicId;
-        }
 
         if (itemEditando) {
             await updateDoc(doc(db, "livros", itemEditando.id), dados);

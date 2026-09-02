@@ -41,6 +41,9 @@ const modalGenero = document.getElementById("modalGenero");
 const modalStatus = document.getElementById("modalStatus");
 const modalFavorito = document.getElementById("modalFavorito");
 const modalEstrelas = document.getElementById("modalEstrelas");
+const carrosselAnterior = document.getElementById("carrosselAnterior");
+const carrosselProximo = document.getElementById("carrosselProximo");
+const carrosselIndicadores = document.getElementById("carrosselIndicadores");
 
 const CHAVE_ESTANTE = "estanteSelecionada";
 
@@ -50,6 +53,8 @@ let statusAtivo = "Todos";
 let apenasFavoritos = false;
 let termoPesquisa = "";
 let donoSelecionado = localStorage.getItem(CHAVE_ESTANTE) || null;
+let fotosModalAtual = [];
+let indiceFotoAtual = 0;
 
 const removerAcentos = new RegExp("[" + String.fromCharCode(0x300) + "-" + String.fromCharCode(0x36f) + "]", "g");
 
@@ -77,7 +82,8 @@ function renderCards(lista) {
     cards.innerHTML = lista.map((l) => `
         <div class="card" data-id="${l.id}">
             ${l.favorito ? '<span class="favoritoTag" title="Favorito"><i class="fa-solid fa-heart"></i></span>' : ""}
-            <img src="${l.capa}" alt="${l.titulo}">
+            ${l.fotos?.length > 1 ? `<span class="fotosBadge"><i class="fa-solid fa-images"></i> ${l.fotos.length}</span>` : ""}
+            <img src="${l.fotos?.[0]?.url}" alt="${l.titulo}" onerror="this.onerror=null;this.src='${l.fotos?.[0]?.original}';">
             <h3>${l.titulo}</h3>
             <span class="autor">${l.autor}</span>
             <div class="badges">
@@ -177,9 +183,45 @@ if (donoSelecionado) {
     selecionarDono(donoSelecionado);
 }
 
+function renderFotoModal() {
+
+    const foto = fotosModalAtual[indiceFotoAtual];
+    modalImagem.src = foto.url;
+    modalImagem.onerror = () => {
+        modalImagem.onerror = null;
+        modalImagem.src = foto.original;
+    };
+
+    const temVarias = fotosModalAtual.length > 1;
+    carrosselAnterior.classList.toggle("oculto", !temVarias);
+    carrosselProximo.classList.toggle("oculto", !temVarias);
+
+    carrosselIndicadores.innerHTML = temVarias
+        ? fotosModalAtual.map((_, indice) => `
+            <button type="button" data-indice="${indice}" class="${indice === indiceFotoAtual ? "ativo" : ""}"></button>
+        `).join("")
+        : "";
+
+}
+
+function irParaFoto(indice) {
+    indiceFotoAtual = (indice + fotosModalAtual.length) % fotosModalAtual.length;
+    renderFotoModal();
+}
+
+carrosselAnterior.addEventListener("click", () => irParaFoto(indiceFotoAtual - 1));
+carrosselProximo.addEventListener("click", () => irParaFoto(indiceFotoAtual + 1));
+
+carrosselIndicadores.addEventListener("click", (evento) => {
+    const botao = evento.target.closest("button[data-indice]");
+    if (!botao) return;
+    irParaFoto(Number(botao.dataset.indice));
+});
+
 function abrirModal(livro) {
-    modalImagem.src = livro.capa;
-    modalImagem.alt = livro.titulo;
+    fotosModalAtual = livro.fotos?.length ? livro.fotos : [{ url: "", original: "" }];
+    indiceFotoAtual = 0;
+    renderFotoModal();
     modalNome.textContent = livro.titulo;
     modalAutor.textContent = livro.autor;
     modalGenero.textContent = livro.genero;
@@ -209,7 +251,13 @@ modal.addEventListener("click", (evento) => {
 });
 
 document.addEventListener("keydown", (evento) => {
+
+    if (modal.style.display !== "flex") return;
+
     if (evento.key === "Escape") fecharModal();
+    if (evento.key === "ArrowLeft") irParaFoto(indiceFotoAtual - 1);
+    if (evento.key === "ArrowRight") irParaFoto(indiceFotoAtual + 1);
+
 });
 
 sidebar.addEventListener("click", (evento) => {

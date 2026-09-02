@@ -198,29 +198,27 @@ required>
 
 <input type="hidden" id="nota" value="0">
 
-<label>Capa do livro</label>
+<label>Fotos do livro</label>
 
 <div class="uploadImagem">
 
-<label for="capa" class="btnUpload">
+<label for="fotos" class="btnUpload">
 <i class="fa-solid fa-upload"></i>
-Escolher imagem
+Escolher fotos
 </label>
 
-<span id="nomeArquivo" class="nomeArquivo">Nenhum arquivo selecionado</span>
+<span id="nomeArquivo" class="nomeArquivo">Nenhuma foto selecionada</span>
 
 <input
 type="file"
-id="capa"
+id="fotos"
 accept="image/*"
 class="inputOculto"
-required>
+multiple>
 
 </div>
 
-<img
-id="preview"
-style="display:none;">
+<div id="fotosPreview" class="fotosPreview"></div>
 
 <p id="statusForm"></p>
 

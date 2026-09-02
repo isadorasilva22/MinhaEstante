@@ -431,6 +431,23 @@ box-shadow:0 4px 10px rgba(0,0,0,.15);
 
 }
 
+.fotosBadge{
+
+position:absolute;
+top:28px;
+left:28px;
+display:flex;
+align-items:center;
+gap:6px;
+padding:6px 12px;
+border-radius:20px;
+background:rgba(43,42,37,.65);
+color:var(--branco);
+font-size:12px;
+font-weight:bold;
+
+}
+
 .estrelas{
 
 display:flex;
@@ -519,6 +536,7 @@ padding:0 20px 20px;
 
 .modal-image{
 
+position:relative;
 display:flex;
 justify-content:center;
 align-items:center;
@@ -531,9 +549,79 @@ padding:15px;
 .modal-image img{
 
 width:100%;
-max-height:320px;
+height:320px;
 object-fit:cover;
 border-radius:10px;
+
+}
+
+.carrosselSeta{
+
+position:absolute;
+top:50%;
+transform:translateY(-50%);
+width:36px;
+height:36px;
+border-radius:50%;
+border:none;
+background:var(--branco);
+color:var(--oliva);
+font-size:14px;
+cursor:pointer;
+box-shadow:0 4px 10px rgba(0,0,0,.15);
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:2;
+
+}
+
+.carrosselSeta:hover{
+
+background:var(--oliva);
+color:var(--branco);
+
+}
+
+.carrosselSeta.esquerda{
+
+left:24px;
+
+}
+
+.carrosselSeta.direita{
+
+right:24px;
+
+}
+
+.carrosselIndicadores{
+
+position:absolute;
+bottom:24px;
+left:50%;
+transform:translateX(-50%);
+display:flex;
+gap:6px;
+z-index:2;
+
+}
+
+.carrosselIndicadores button{
+
+width:8px;
+height:8px;
+padding:0;
+border:none;
+border-radius:50%;
+background:rgba(255,255,255,.6);
+cursor:pointer;
+
+}
+
+.carrosselIndicadores button.ativo{
+
+background:var(--branco);
 
 }
 
