@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Estante | Minha Estante</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/estante.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel='icon' type="image/svg+xml" href="imagens/logo.svg">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+</head>
+
+<body>
+
+<header>
+
+<div class="container">
+
+<a href="index.html" class="marca">
+
+<img src="imagens/logo.svg" class="logo">
+<span>Minha Estante</span>
+
+</a>
+
+<div class="pesquisa">
+
+<i class="fa-solid fa-magnifying-glass"></i>
+
+<input
+type="text"
+id="pesquisa"
+placeholder="Pesquisar por título ou autor...">
+
+</div>
+
+<a href="admin.html" class="btnLogin">
+    <i class="fa-solid fa-lock"></i>
+        Administração
+</a>
+
+</div>
+
+
+</header>
+
+<main class="layout">
+
+    <aside class="sidebar">
+
+        <h3>Gêneros</h3>
+
+        <button class="ativo" data-genero="Todos">
+            Todos
+        </button>
+
+        <button type="button" id="btnFiltroFavoritos">
+            <i class="fa-solid fa-heart"></i> Favoritos
+        </button>
+
+        <div id="listaGenerosFiltro"></div>
+
+        <h3 class="separador">Status de leitura</h3>
+
+        <div class="statusFiltro">
+
+            <button class="ativo" data-status="Todos">Todos</button>
+            <button data-status="quero-ler">Quero Ler</button>
+            <button data-status="lendo">Lendo</button>
+            <button data-status="lido">Lido</button>
+
+        </div>
+
+    </aside>
+
+    <section class="conteudo">
+
+        <div class="titulo">
+
+            <h1>Minha Estante</h1>
+
+            <span id="contador">
+                0 livros
+            </span>
+
+        </div>
+
+        <section id="cards" class="cards"></section>
+
+    </section>
+
+</main>
+
+<div id="modal" class="modal">
+
+<div class="modal-content">
+
+<div class="modal-header">
+
+<button id="fechar" class="close">&times;</button>
+
+</div>
+
+<div class="modal-grid">
+
+<div class="modal-image">
+
+<img id="modalImagem">
+
+</div>
+
+<div class="modal-info">
+
+<h2 id="modalNome"></h2>
+
+<p id="modalAutor"></p>
+
+<div class="badges">
+
+<span class="badge badge-genero" id="modalGenero"></span>
+
+<span class="badge" id="modalStatus"></span>
+
+<span class="badge badge-favorito" id="modalFavorito">
+<i class="fa-solid fa-heart"></i> Favorito
+</span>
+
+</div>
+
+<div class="estrelas" id="modalEstrelas"></div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<script type="module" src="js/estante.js"></script>
+
+</body>
+
+</html>

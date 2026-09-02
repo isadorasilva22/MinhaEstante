@@ -1,0 +1,67 @@
+:root{
+
+    --oliva:#3C4A2E;
+    --oliva-escuro:#2E3823;
+    --oliva-claro:#E9EDE3;
+
+    --dourado:#C89B3C;
+    --dourado-claro:#FBEFC9;
+    --dourado-texto:#8A6D1F;
+
+    --vinho:#7B2D3B;
+    --vinho-claro:#F3E2E5;
+
+    --creme:#FAF6EE;
+    --branco:#FFFFFF;
+
+    --texto:#2B2A25;
+    --texto-suave:#6B6558;
+    --borda:#E4DFD3;
+
+    --erro:#C0392B;
+
+    --fonte-titulo:'Playfair Display',serif;
+    --fonte-corpo:'Inter',sans-serif;
+
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+
+    font-family:var(--fonte-corpo);
+    background:var(--creme);
+    color:var(--texto);
+
+}
+
+h1,h2,h3{
+
+    font-family:var(--fonte-titulo);
+
+}
+
+.container{
+
+    width:90%;
+    max-width:1200px;
+    margin:auto;
+
+}
+
+a{
+
+    text-decoration:none;
+    color:inherit;
+
+}
+
+section{
+
+    padding:90px 0;
+
+}

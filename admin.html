@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Administração | Minha Estante</title>
+
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/admin.css">
+<link rel="stylesheet" href="css/responsive.css">
+<link rel='icon' type="image/svg+xml" href="imagens/logo.svg">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+</head>
+
+<body>
+
+<header>
+
+<div class="container">
+
+<a href="index.html" class="marca">
+<img src="imagens/logo.svg" class="logo">
+<span>Minha Estante</span>
+</a>
+
+<a href="estante.html" class="verEstante">
+Ver Estante
+</a>
+
+</div>
+
+</header>
+
+<div class="painelAdmin">
+
+<div id="loginSection">
+
+<h1>Login</h1>
+
+<form id="formLogin">
+
+<label>E-mail</label>
+
+<input
+type="email"
+id="loginEmail"
+required>
+
+<label>Senha</label>
+
+<input
+type="password"
+id="loginSenha"
+required>
+
+<p id="loginErro" class="erro"></p>
+
+<button>
+
+Entrar
+
+</button>
+
+</form>
+
+</div>
+
+<div id="cadastroSection" class="oculto">
+
+<div class="topoAdmin">
+
+<h1 id="tituloForm">Novo Livro</h1>
+
+<div class="usuarioBox">
+
+<span id="usuarioLogado"></span>
+
+<button type="button" id="btnLogout" class="logout">
+Sair
+</button>
+
+</div>
+
+</div>
+
+<div class="generosSection">
+
+<h2>Gêneros</h2>
+
+<form id="formGenero" class="formInline">
+
+<input
+type="text"
+id="novoGenero"
+placeholder="Novo gênero"
+required>
+
+<button type="submit">
+Adicionar
+</button>
+
+</form>
+
+<div id="listaGeneros" class="listaGeneros"></div>
+
+</div>
+
+<form id="formCadastro">
+
+<label>Título</label>
+
+<input
+type="text"
+id="titulo"
+required>
+
+<label>Autor</label>
+
+<input
+type="text"
+id="autor"
+required>
+
+<label>Gênero</label>
+
+<div class="campoSeletor">
+
+<input
+type="text"
+id="genero"
+placeholder="Selecione um gênero..."
+readonly
+required>
+
+<i class="fa-solid fa-chevron-down"></i>
+
+</div>
+
+<label>Status de leitura</label>
+
+<select id="status" required>
+<option value="quero-ler">Quero Ler</option>
+<option value="lendo">Lendo</option>
+<option value="lido">Lido</option>
+</select>
+
+<label>Sua nota</label>
+
+<div class="estrelasInput" id="estrelasInput"></div>
+
+<input type="hidden" id="nota" value="0">
+
+<label>Capa do livro</label>
+
+<div class="uploadImagem">
+
+<label for="capa" class="btnUpload">
+<i class="fa-solid fa-upload"></i>
+Escolher imagem
+</label>
+
+<span id="nomeArquivo" class="nomeArquivo">Nenhum arquivo selecionado</span>
+
+<input
+type="file"
+id="capa"
+accept="image/*"
+class="inputOculto"
+required>
+
+</div>
+
+<img
+id="preview"
+style="display:none;">
+
+<p id="statusForm"></p>
+
+<div class="acoesForm">
+
+<button type="button" id="btnCancelarEdicao" class="cancelar oculto">
+Cancelar edição
+</button>
+
+<button type="submit" id="btnSalvar">
+
+Salvar
+
+</button>
+
+</div>
+
+</form>
+
+<div class="listaWrapper">
+
+<div class="topoLista">
+
+<h2>Livros cadastrados</h2>
+
+<div class="pesquisa">
+
+<i class="fa-solid fa-magnifying-glass"></i>
+
+<input
+type="text"
+id="pesquisaAdmin"
+placeholder="Pesquisar livro...">
+
+</div>
+
+</div>
+
+<div id="listaLivros" class="listaLivros"></div>
+
+</div>
+
+</div>
+
+</div>
+
+<div id="modalGeneros" class="modalConfirmacao">
+
+<div class="modalConfirmacaoContent modalGenerosContent">
+
+<h3>Selecionar gênero</h3>
+
+<div id="listaGenerosModal" class="listaGenerosModal"></div>
+
+<div class="modalConfirmacaoAcoes">
+
+<button type="button" id="btnFecharModalGeneros" class="cancelar">
+Fechar
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<div id="modalConfirmacao" class="modalConfirmacao">
+
+<div class="modalConfirmacaoContent">
+
+<h3 id="modalConfirmacaoTitulo">Confirmar exclusão</h3>
+
+<p id="modalConfirmacaoTexto"></p>
+
+<div class="modalConfirmacaoAcoes">
+
+<button type="button" id="btnCancelarConfirmacao" class="cancelar">
+Cancelar
+</button>
+
+<button type="button" id="btnConfirmarExclusao" class="confirmarExclusao">
+Excluir
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<script type="module" src="js/auth.js"></script>
+<script type="module" src="js/admin.js"></script>
+
+</body>
+
+</html>
