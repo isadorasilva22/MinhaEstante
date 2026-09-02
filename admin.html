@@ -80,7 +80,7 @@ Entrar
 
 <div class="topoAdmin">
 
-<h1 id="tituloForm">Novo Livro</h1>
+<h1>Administração</h1>
 
 <div class="usuarioBox">
 
@@ -94,9 +94,13 @@ Sair
 
 </div>
 
+<section class="blocoCadastro">
+
+<h2 class="tituloSecao">Cadastro de Categorias</h2>
+
 <div class="generosSection">
 
-<h2>Gêneros</h2>
+<h3>Gêneros</h3>
 
 <form id="formGenero" class="formInline">
 
@@ -118,7 +122,7 @@ Adicionar
 
 <div class="generosSection">
 
-<h2>Donos das estantes</h2>
+<h3>Donos das estantes</h3>
 
 <form id="formDono" class="formInline">
 
@@ -137,6 +141,14 @@ Adicionar
 <div id="listaDonos" class="listaGeneros"></div>
 
 </div>
+
+</section>
+
+<section class="blocoCadastro">
+
+<h2 class="tituloSecao">Cadastro de Livros</h2>
+
+<h3 id="tituloForm">Novo Livro</h3>
 
 <form id="formCadastro">
 
@@ -169,14 +181,14 @@ required>
 
 </div>
 
-<label>Gênero</label>
+<label>Gêneros</label>
 
 <div class="campoSeletor">
 
 <input
 type="text"
-id="genero"
-placeholder="Selecione um gênero..."
+id="generos"
+placeholder="Selecione um ou mais gêneros..."
 readonly
 required>
 
@@ -186,17 +198,30 @@ required>
 
 <label>Status de leitura</label>
 
-<select id="status" required>
-<option value="quero-ler">Quero Ler</option>
-<option value="lendo">Lendo</option>
-<option value="lido">Lido</option>
-</select>
+<div class="campoSeletor">
+
+<input
+type="text"
+id="statusLabel"
+placeholder="Selecione o status..."
+readonly
+required>
+
+<i class="fa-solid fa-chevron-down"></i>
+
+</div>
+
+<input type="hidden" id="status" value="">
 
 <label>Sua nota</label>
 
 <div class="estrelasInput" id="estrelasInput"></div>
 
 <input type="hidden" id="nota" value="0">
+
+<label>Comentários</label>
+
+<textarea id="comentarios" rows="3" placeholder="Suas anotações sobre o livro (opcional)"></textarea>
 
 <label>Fotos do livro</label>
 
@@ -238,6 +263,8 @@ Salvar
 
 </form>
 
+</section>
+
 <div class="listaWrapper">
 
 <div class="topoLista">
@@ -269,13 +296,33 @@ placeholder="Pesquisar livro...">
 
 <div class="modalConfirmacaoContent modalGenerosContent">
 
-<h3>Selecionar gênero</h3>
+<h3>Selecionar gêneros</h3>
 
 <div id="listaGenerosModal" class="listaGenerosModal"></div>
 
 <div class="modalConfirmacaoAcoes">
 
 <button type="button" id="btnFecharModalGeneros" class="cancelar">
+Concluir
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<div id="modalStatus" class="modalConfirmacao">
+
+<div class="modalConfirmacaoContent modalGenerosContent">
+
+<h3>Selecionar status</h3>
+
+<div id="listaStatusModal" class="listaGenerosModal"></div>
+
+<div class="modalConfirmacaoAcoes">
+
+<button type="button" id="btnFecharModalStatus" class="cancelar">
 Fechar
 </button>
 

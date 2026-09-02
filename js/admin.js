@@ -29,9 +29,11 @@ const form = document.getElementById("formCadastro");
 const inputTitulo = document.getElementById("titulo");
 const inputAutor = document.getElementById("autor");
 const inputDono = document.getElementById("dono");
-const inputGenero = document.getElementById("genero");
+const inputGeneros = document.getElementById("generos");
 const inputStatus = document.getElementById("status");
+const inputStatusLabel = document.getElementById("statusLabel");
 const inputNota = document.getElementById("nota");
+const inputComentarios = document.getElementById("comentarios");
 const estrelasInput = document.getElementById("estrelasInput");
 const inputFotos = document.getElementById("fotos");
 const fotosPreview = document.getElementById("fotosPreview");
@@ -60,6 +62,10 @@ const modalGeneros = document.getElementById("modalGeneros");
 const listaGenerosModal = document.getElementById("listaGenerosModal");
 const btnFecharModalGeneros = document.getElementById("btnFecharModalGeneros");
 
+const modalStatus = document.getElementById("modalStatus");
+const listaStatusModal = document.getElementById("listaStatusModal");
+const btnFecharModalStatus = document.getElementById("btnFecharModalStatus");
+
 const modalDonos = document.getElementById("modalDonos");
 const listaDonosModal = document.getElementById("listaDonosModal");
 const btnFecharModalDonos = document.getElementById("btnFecharModalDonos");
@@ -68,6 +74,7 @@ let itemEditando = null;
 let itensAtuais = [];
 let generosAtuais = [];
 let donosAtuais = [];
+let generosSelecionados = [];
 let fotosPendentes = [];
 let termoPesquisaAdmin = "";
 let notaAtual = 0;
@@ -230,6 +237,8 @@ function resetFormParaNovo() {
     itemEditando = null;
     fotosPendentes = [];
     renderFotosPreview();
+    generosSelecionados = [];
+    atualizarCampoGeneros();
     form.reset();
     nomeArquivo.textContent = "Nenhuma foto selecionada";
     tituloForm.textContent = "Novo Livro";
@@ -242,11 +251,14 @@ function iniciarEdicao(item) {
     itemEditando = item;
     fotosPendentes = (item.fotos || []).slice();
     renderFotosPreview();
+    generosSelecionados = (item.generos || []).slice();
+    atualizarCampoGeneros();
     inputTitulo.value = item.titulo;
     inputAutor.value = item.autor;
     inputDono.value = item.dono;
-    inputGenero.value = item.genero;
     inputStatus.value = item.status;
+    inputStatusLabel.value = STATUS_LABEL[item.status] || "";
+    inputComentarios.value = item.comentarios || "";
     notaAtual = item.nota || 0;
     renderEstrelasInput();
     inputNota.value = notaAtual;
@@ -304,7 +316,7 @@ function renderLista(itens) {
             <img src="${item.fotos?.[0]?.url}" onerror="this.onerror=null;this.src='${item.fotos?.[0]?.original}';">
             <div class="infoItem">
                 <strong>${item.titulo}</strong>
-                <span>${item.autor} · ${item.dono} · ${item.genero} · ${STATUS_LABEL[item.status] || item.status}</span>
+                <span>${item.autor} · ${item.dono} · ${item.generos?.join(", ") || "sem gênero"} · ${STATUS_LABEL[item.status] || item.status}</span>
             </div>
             <div class="acoesItem">
                 <button type="button" class="btnFavorito${item.favorito ? " ativo" : ""}" data-id="${item.id}" title="${item.favorito ? "Remover dos favoritos" : "Marcar como favorito"}">
@@ -346,10 +358,17 @@ inputPesquisaAdmin.addEventListener("input", () => {
 //	GÊNEROS
 //------------------------------------------------------------------------------------------
 
+function atualizarCampoGeneros() {
+    inputGeneros.value = generosSelecionados.join(", ");
+}
+
 function sincronizarGeneroAtual() {
 
-    if (inputGenero.value && !generosAtuais.some((g) => g.nome === inputGenero.value)) {
-        inputGenero.value = "";
+    const antes = generosSelecionados.length;
+    generosSelecionados = generosSelecionados.filter((nome) => generosAtuais.some((g) => g.nome === nome));
+
+    if (generosSelecionados.length !== antes) {
+        atualizarCampoGeneros();
     }
 
 }
@@ -362,9 +381,9 @@ function renderListaGenerosModal() {
     }
 
     listaGenerosModal.innerHTML = generosAtuais.map((g) => `
-        <button type="button" class="itemGeneroModal${g.nome === inputGenero.value ? " ativo" : ""}" data-nome="${g.nome}">
+        <button type="button" class="itemGeneroModal${generosSelecionados.includes(g.nome) ? " ativo" : ""}" data-nome="${g.nome}">
             ${g.nome}
-            ${g.nome === inputGenero.value ? '<i class="fa-solid fa-check"></i>' : ""}
+            ${generosSelecionados.includes(g.nome) ? '<i class="fa-solid fa-check"></i>' : ""}
         </button>
     `).join("");
 
@@ -379,11 +398,11 @@ function fecharModalGeneros() {
     modalGeneros.style.display = "none";
 }
 
-inputGenero.addEventListener("focus", () => inputGenero.blur());
+inputGeneros.addEventListener("focus", () => inputGeneros.blur());
 
-inputGenero.addEventListener("click", abrirModalGeneros);
+inputGeneros.addEventListener("click", abrirModalGeneros);
 
-inputGenero.addEventListener("keydown", (evento) => {
+inputGeneros.addEventListener("keydown", (evento) => {
     if (evento.key === "Enter" || evento.key === " ") {
         evento.preventDefault();
         abrirModalGeneros();
@@ -407,8 +426,16 @@ listaGenerosModal.addEventListener("click", (evento) => {
     const botao = evento.target.closest(".itemGeneroModal");
     if (!botao) return;
 
-    inputGenero.value = botao.dataset.nome;
-    fecharModalGeneros();
+    const nome = botao.dataset.nome;
+
+    if (generosSelecionados.includes(nome)) {
+        generosSelecionados = generosSelecionados.filter((g) => g !== nome);
+    } else {
+        generosSelecionados.push(nome);
+    }
+
+    atualizarCampoGeneros();
+    renderListaGenerosModal();
 
 });
 
@@ -476,6 +503,64 @@ onSnapshot(
         listaGeneros.innerHTML = '<p class="erro">Erro ao carregar gêneros.</p>';
     }
 );
+
+//------------------------------------------------------------------------------------------
+//	STATUS DE LEITURA
+//------------------------------------------------------------------------------------------
+
+function renderListaStatusModal() {
+
+    listaStatusModal.innerHTML = Object.entries(STATUS_LABEL).map(([valor, rotulo]) => `
+        <button type="button" class="itemGeneroModal${valor === inputStatus.value ? " ativo" : ""}" data-valor="${valor}">
+            ${rotulo}
+            ${valor === inputStatus.value ? '<i class="fa-solid fa-check"></i>' : ""}
+        </button>
+    `).join("");
+
+}
+
+function abrirModalStatus() {
+    renderListaStatusModal();
+    modalStatus.style.display = "flex";
+}
+
+function fecharModalStatus() {
+    modalStatus.style.display = "none";
+}
+
+inputStatusLabel.addEventListener("focus", () => inputStatusLabel.blur());
+
+inputStatusLabel.addEventListener("click", abrirModalStatus);
+
+inputStatusLabel.addEventListener("keydown", (evento) => {
+    if (evento.key === "Enter" || evento.key === " ") {
+        evento.preventDefault();
+        abrirModalStatus();
+    }
+});
+
+btnFecharModalStatus.addEventListener("click", fecharModalStatus);
+
+modalStatus.addEventListener("click", (evento) => {
+    if (evento.target === modalStatus) fecharModalStatus();
+});
+
+document.addEventListener("keydown", (evento) => {
+    if (evento.key === "Escape" && modalStatus.style.display === "flex") {
+        fecharModalStatus();
+    }
+});
+
+listaStatusModal.addEventListener("click", (evento) => {
+
+    const botao = evento.target.closest(".itemGeneroModal");
+    if (!botao) return;
+
+    inputStatus.value = botao.dataset.valor;
+    inputStatusLabel.value = STATUS_LABEL[botao.dataset.valor];
+    fecharModalStatus();
+
+});
 
 //------------------------------------------------------------------------------------------
 //	DONOS DAS ESTANTES
@@ -658,6 +743,11 @@ form.addEventListener("submit", async (evento) => {
         return;
     }
 
+    if (generosSelecionados.length === 0) {
+        status.textContent = "Selecione ao menos um gênero.";
+        return;
+    }
+
     botaoSalvar.disabled = true;
     status.textContent = itemEditando ? "Atualizando..." : "Salvando...";
 
@@ -667,9 +757,10 @@ form.addEventListener("submit", async (evento) => {
             titulo: inputTitulo.value,
             autor: inputAutor.value,
             dono: inputDono.value,
-            genero: inputGenero.value,
+            generos: generosSelecionados,
             status: inputStatus.value,
             nota: notaAtual,
+            comentarios: inputComentarios.value.trim(),
             favorito: itemEditando?.favorito || false,
             fotos: fotosPendentes
         };

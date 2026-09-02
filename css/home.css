@@ -181,8 +181,7 @@ nav a:hover{
 
 }
 
-.sobre h2,
-.generos h2{
+.sobre h2{
 
     text-align:center;
     font-size:40px;
@@ -232,42 +231,6 @@ nav a:hover{
 
     color:var(--texto-suave);
     line-height:1.6;
-
-}
-
-.genero-grid{
-
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-    gap:25px;
-
-}
-
-.genero{
-
-    background:var(--branco);
-    border-radius:20px;
-    padding:30px;
-    text-align:center;
-    box-shadow:0 10px 20px rgba(0,0,0,.05);
-    transition:.3s;
-    cursor:default;
-    border-top:3px solid var(--dourado);
-
-}
-
-.genero:hover{
-
-    transform:translateY(-8px);
-
-}
-
-.genero span{
-
-    display:block;
-    font-family:var(--fonte-titulo);
-    font-size:19px;
-    font-weight:700;
 
 }
 
