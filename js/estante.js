@@ -25,6 +25,12 @@ const inputPesquisa = document.getElementById("pesquisa");
 const sidebar = document.querySelector(".sidebar");
 const listaGenerosFiltro = document.getElementById("listaGenerosFiltro");
 const btnFiltroFavoritos = document.getElementById("btnFiltroFavoritos");
+const tituloEstante = document.getElementById("tituloEstante");
+
+const seletorEstante = document.getElementById("seletorEstante");
+const listaSeletorDonos = document.getElementById("listaSeletorDonos");
+const layoutPrincipal = document.getElementById("layoutPrincipal");
+const btnTrocarEstante = document.getElementById("btnTrocarEstante");
 
 const modal = document.getElementById("modal");
 const fechar = document.getElementById("fechar");
@@ -36,11 +42,14 @@ const modalStatus = document.getElementById("modalStatus");
 const modalFavorito = document.getElementById("modalFavorito");
 const modalEstrelas = document.getElementById("modalEstrelas");
 
+const CHAVE_ESTANTE = "estanteSelecionada";
+
 let todosLivros = [];
 let generoAtivo = "Todos";
 let statusAtivo = "Todos";
 let apenasFavoritos = false;
 let termoPesquisa = "";
+let donoSelecionado = localStorage.getItem(CHAVE_ESTANTE) || null;
 
 const removerAcentos = new RegExp("[" + String.fromCharCode(0x300) + "-" + String.fromCharCode(0x36f) + "]", "g");
 
@@ -83,7 +92,7 @@ function renderCards(lista) {
 
 function aplicarFiltros() {
 
-    let filtrados = todosLivros;
+    let filtrados = todosLivros.filter((l) => l.dono === donoSelecionado);
 
     if (generoAtivo !== "Todos") {
         filtrados = filtrados.filter((l) => l.genero === generoAtivo);
@@ -116,6 +125,56 @@ function renderBotoesGenero(generos) {
         </button>
     `).join("");
 
+}
+
+//------------------------------------------------------------------------------------------
+//	SELEÇÃO DA ESTANTE (DONO)
+//------------------------------------------------------------------------------------------
+
+function renderSeletorDonos(donos) {
+
+    if (donos.length === 0) {
+        listaSeletorDonos.innerHTML = '<p class="vazio">Nenhuma estante cadastrada ainda.</p>';
+        return;
+    }
+
+    listaSeletorDonos.innerHTML = donos.map((nome) => `
+        <button type="button" class="cardSeletorDono" data-dono="${nome}">
+            <i class="fa-solid fa-book-open"></i>
+            ${nome}
+        </button>
+    `).join("");
+
+}
+
+function selecionarDono(nome) {
+    donoSelecionado = nome;
+    localStorage.setItem(CHAVE_ESTANTE, nome);
+    tituloEstante.textContent = `Estante de ${nome}`;
+    seletorEstante.classList.add("oculto");
+    layoutPrincipal.classList.remove("oculto");
+    btnTrocarEstante.classList.remove("oculto");
+    aplicarFiltros();
+}
+
+function voltarSeletor() {
+    donoSelecionado = null;
+    localStorage.removeItem(CHAVE_ESTANTE);
+    seletorEstante.classList.remove("oculto");
+    layoutPrincipal.classList.add("oculto");
+    btnTrocarEstante.classList.add("oculto");
+}
+
+listaSeletorDonos.addEventListener("click", (evento) => {
+    const botao = evento.target.closest(".cardSeletorDono");
+    if (!botao) return;
+    selecionarDono(botao.dataset.dono);
+});
+
+btnTrocarEstante.addEventListener("click", voltarSeletor);
+
+if (donoSelecionado) {
+    selecionarDono(donoSelecionado);
 }
 
 function abrirModal(livro) {
@@ -194,6 +253,18 @@ onSnapshot(
         renderBotoesGenero(generos);
     },
     (erro) => console.error(erro)
+);
+
+onSnapshot(
+    query(collection(db, "donos"), orderBy("nome")),
+    (snapshot) => {
+        const donos = snapshot.docs.map((documento) => documento.data().nome);
+        renderSeletorDonos(donos);
+    },
+    (erro) => {
+        console.error(erro);
+        listaSeletorDonos.innerHTML = '<p class="vazio">Erro ao carregar as estantes.</p>';
+    }
 );
 
 onSnapshot(

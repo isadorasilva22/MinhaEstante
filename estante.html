@@ -46,6 +46,11 @@ placeholder="Pesquisar por título ou autor...">
 
 </div>
 
+<button type="button" id="btnTrocarEstante" class="btnTrocarEstante oculto">
+    <i class="fa-solid fa-arrows-rotate"></i>
+    Trocar estante
+</button>
+
 <a href="admin.html" class="btnLogin">
     <i class="fa-solid fa-lock"></i>
         Administração
@@ -56,7 +61,19 @@ placeholder="Pesquisar por título ou autor...">
 
 </header>
 
-<main class="layout">
+<section id="seletorEstante" class="seletorEstante">
+
+    <span class="tag">Estante Compartilhada</span>
+
+    <h1>De quem é a estante que você quer ver?</h1>
+
+    <p>Escolha abaixo para ver os livros dessa pessoa.</p>
+
+    <div id="listaSeletorDonos" class="listaSeletorDonos"></div>
+
+</section>
+
+<main class="layout oculto" id="layoutPrincipal">
 
     <aside class="sidebar">
 
@@ -89,7 +106,7 @@ placeholder="Pesquisar por título ou autor...">
 
         <div class="titulo">
 
-            <h1>Minha Estante</h1>
+            <h1 id="tituloEstante">Minha Estante</h1>
 
             <span id="contador">
                 0 livros

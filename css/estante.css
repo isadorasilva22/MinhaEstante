@@ -87,6 +87,100 @@ font-family:var(--fonte-corpo);
 
 }
 
+.btnTrocarEstante{
+
+display:inline-flex;
+align-items:center;
+gap:8px;
+background:none;
+border:1px solid var(--borda);
+color:var(--texto-suave);
+padding:10px 16px;
+border-radius:12px;
+font-weight:600;
+font-family:var(--fonte-corpo);
+font-size:14px;
+cursor:pointer;
+transition:.3s;
+
+}
+
+.btnTrocarEstante:hover{
+
+background:var(--oliva-claro);
+color:var(--oliva);
+border-color:var(--oliva-claro);
+
+}
+
+.oculto{
+
+display:none !important;
+
+}
+
+.seletorEstante{
+
+max-width:720px;
+margin:70px auto;
+padding:0 20px;
+text-align:center;
+
+}
+
+.seletorEstante h1{
+
+font-size:34px;
+margin:16px 0;
+
+}
+
+.seletorEstante > p{
+
+color:var(--texto-suave);
+margin-bottom:35px;
+
+}
+
+.listaSeletorDonos{
+
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+gap:20px;
+
+}
+
+.cardSeletorDono{
+
+background:var(--branco);
+border:2px solid var(--borda);
+border-radius:20px;
+padding:35px 20px;
+cursor:pointer;
+transition:.3s;
+font-family:var(--fonte-corpo);
+font-size:17px;
+font-weight:700;
+color:var(--texto);
+
+}
+
+.cardSeletorDono i{
+
+display:block;
+font-size:32px;
+color:var(--oliva);
+margin-bottom:14px;
+
+}
+
+.cardSeletorDono:hover{
+
+border-color:var(--oliva);
+transform:translateY(-6px);
+
+}
+
 .layout{
 
 display:grid;

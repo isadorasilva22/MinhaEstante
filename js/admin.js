@@ -22,10 +22,12 @@ const STATUS_LABEL = {
 
 const colecao = collection(db, "livros");
 const colecaoGeneros = collection(db, "generos");
+const colecaoDonos = collection(db, "donos");
 
 const form = document.getElementById("formCadastro");
 const inputTitulo = document.getElementById("titulo");
 const inputAutor = document.getElementById("autor");
+const inputDono = document.getElementById("dono");
 const inputGenero = document.getElementById("genero");
 const inputStatus = document.getElementById("status");
 const inputNota = document.getElementById("nota");
@@ -44,6 +46,10 @@ const formGenero = document.getElementById("formGenero");
 const inputNovoGenero = document.getElementById("novoGenero");
 const listaGeneros = document.getElementById("listaGeneros");
 
+const formDono = document.getElementById("formDono");
+const inputNovoDono = document.getElementById("novoDono");
+const listaDonos = document.getElementById("listaDonos");
+
 const modalConfirmacao = document.getElementById("modalConfirmacao");
 const modalConfirmacaoTexto = document.getElementById("modalConfirmacaoTexto");
 const btnCancelarConfirmacao = document.getElementById("btnCancelarConfirmacao");
@@ -53,9 +59,14 @@ const modalGeneros = document.getElementById("modalGeneros");
 const listaGenerosModal = document.getElementById("listaGenerosModal");
 const btnFecharModalGeneros = document.getElementById("btnFecharModalGeneros");
 
+const modalDonos = document.getElementById("modalDonos");
+const listaDonosModal = document.getElementById("listaDonosModal");
+const btnFecharModalDonos = document.getElementById("btnFecharModalDonos");
+
 let itemEditando = null;
 let itensAtuais = [];
 let generosAtuais = [];
+let donosAtuais = [];
 let uploadPendente = null;
 let termoPesquisaAdmin = "";
 let notaAtual = 0;
@@ -216,6 +227,7 @@ function iniciarEdicao(item) {
     uploadPendente = null;
     inputTitulo.value = item.titulo;
     inputAutor.value = item.autor;
+    inputDono.value = item.dono;
     inputGenero.value = item.genero;
     inputStatus.value = item.status;
     inputCapa.value = "";
@@ -279,7 +291,7 @@ function renderLista(itens) {
             <img src="${item.capa}">
             <div class="infoItem">
                 <strong>${item.titulo}</strong>
-                <span>${item.autor} · ${item.genero} · ${STATUS_LABEL[item.status] || item.status}</span>
+                <span>${item.autor} · ${item.dono} · ${item.genero} · ${STATUS_LABEL[item.status] || item.status}</span>
             </div>
             <div class="acoesItem">
                 <button type="button" class="btnFavorito${item.favorito ? " ativo" : ""}" data-id="${item.id}" title="${item.favorito ? "Remover dos favoritos" : "Marcar como favorito"}">
@@ -452,6 +464,141 @@ onSnapshot(
     }
 );
 
+//------------------------------------------------------------------------------------------
+//	DONOS DAS ESTANTES
+//------------------------------------------------------------------------------------------
+
+function sincronizarDonoAtual() {
+
+    if (inputDono.value && !donosAtuais.some((d) => d.nome === inputDono.value)) {
+        inputDono.value = "";
+    }
+
+}
+
+function renderListaDonosModal() {
+
+    if (donosAtuais.length === 0) {
+        listaDonosModal.innerHTML = '<p class="vazioLista">Nenhum dono cadastrado ainda.</p>';
+        return;
+    }
+
+    listaDonosModal.innerHTML = donosAtuais.map((d) => `
+        <button type="button" class="itemGeneroModal${d.nome === inputDono.value ? " ativo" : ""}" data-nome="${d.nome}">
+            ${d.nome}
+            ${d.nome === inputDono.value ? '<i class="fa-solid fa-check"></i>' : ""}
+        </button>
+    `).join("");
+
+}
+
+function abrirModalDonos() {
+    renderListaDonosModal();
+    modalDonos.style.display = "flex";
+}
+
+function fecharModalDonos() {
+    modalDonos.style.display = "none";
+}
+
+inputDono.addEventListener("focus", () => inputDono.blur());
+
+inputDono.addEventListener("click", abrirModalDonos);
+
+inputDono.addEventListener("keydown", (evento) => {
+    if (evento.key === "Enter" || evento.key === " ") {
+        evento.preventDefault();
+        abrirModalDonos();
+    }
+});
+
+btnFecharModalDonos.addEventListener("click", fecharModalDonos);
+
+modalDonos.addEventListener("click", (evento) => {
+    if (evento.target === modalDonos) fecharModalDonos();
+});
+
+document.addEventListener("keydown", (evento) => {
+    if (evento.key === "Escape" && modalDonos.style.display === "flex") {
+        fecharModalDonos();
+    }
+});
+
+listaDonosModal.addEventListener("click", (evento) => {
+
+    const botao = evento.target.closest(".itemGeneroModal");
+    if (!botao) return;
+
+    inputDono.value = botao.dataset.nome;
+    fecharModalDonos();
+
+});
+
+function renderListaDonos() {
+
+    if (donosAtuais.length === 0) {
+        listaDonos.innerHTML = '<p class="vazioLista">Nenhum dono cadastrado ainda.</p>';
+        return;
+    }
+
+    listaDonos.innerHTML = donosAtuais.map((d) => `
+        <span class="generoPill">
+            ${d.nome}
+            <button type="button" class="btnExcluirDono" data-id="${d.id}" title="Excluir dono">&times;</button>
+        </span>
+    `).join("");
+
+}
+
+formDono.addEventListener("submit", async (evento) => {
+
+    evento.preventDefault();
+
+    const nome = inputNovoDono.value.trim();
+
+    if (!nome || donosAtuais.some((d) => d.nome.toLowerCase() === nome.toLowerCase())) {
+        formDono.reset();
+        return;
+    }
+
+    await addDoc(colecaoDonos, { nome, criadoEm: serverTimestamp() });
+    formDono.reset();
+
+});
+
+listaDonos.addEventListener("click", async (evento) => {
+
+    const botao = evento.target.closest(".btnExcluirDono");
+    if (!botao) return;
+
+    const confirmado = await confirmarAcao("Excluir este dono? Livros já cadastrados com ele não serão apagados.");
+    if (!confirmado) return;
+
+    try {
+        await deleteDoc(doc(db, "donos", botao.dataset.id));
+    } catch (erro) {
+        console.error(erro);
+        alert(mensagemErro(erro, "excluir o dono"));
+    }
+
+});
+
+onSnapshot(
+    query(colecaoDonos, orderBy("nome")),
+    (snapshot) => {
+        donosAtuais = snapshot.docs.map((documento) => ({ id: documento.id, ...documento.data() }));
+        sincronizarDonoAtual();
+        renderListaDonos();
+        if (modalDonos.style.display === "flex") {
+            renderListaDonosModal();
+        }
+    },
+    (erro) => {
+        console.error(erro);
+        listaDonos.innerHTML = '<p class="erro">Erro ao carregar donos.</p>';
+    }
+);
+
 onSnapshot(
     query(colecao, orderBy("titulo")),
     (snapshot) => {
@@ -512,6 +659,7 @@ form.addEventListener("submit", async (evento) => {
         const dados = {
             titulo: inputTitulo.value,
             autor: inputAutor.value,
+            dono: inputDono.value,
             genero: inputGenero.value,
             status: inputStatus.value,
             nota: notaAtual,

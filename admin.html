@@ -116,6 +116,28 @@ Adicionar
 
 </div>
 
+<div class="generosSection">
+
+<h2>Donos das estantes</h2>
+
+<form id="formDono" class="formInline">
+
+<input
+type="text"
+id="novoDono"
+placeholder="Nome do dono"
+required>
+
+<button type="submit">
+Adicionar
+</button>
+
+</form>
+
+<div id="listaDonos" class="listaGeneros"></div>
+
+</div>
+
 <form id="formCadastro">
 
 <label>Título</label>
@@ -131,6 +153,21 @@ required>
 type="text"
 id="autor"
 required>
+
+<label>Dono da estante</label>
+
+<div class="campoSeletor">
+
+<input
+type="text"
+id="dono"
+placeholder="Selecione a quem pertence..."
+readonly
+required>
+
+<i class="fa-solid fa-chevron-down"></i>
+
+</div>
 
 <label>Gênero</label>
 
@@ -241,6 +278,26 @@ placeholder="Pesquisar livro...">
 <div class="modalConfirmacaoAcoes">
 
 <button type="button" id="btnFecharModalGeneros" class="cancelar">
+Fechar
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<div id="modalDonos" class="modalConfirmacao">
+
+<div class="modalConfirmacaoContent modalGenerosContent">
+
+<h3>Selecionar dono</h3>
+
+<div id="listaDonosModal" class="listaGenerosModal"></div>
+
+<div class="modalConfirmacaoAcoes">
+
+<button type="button" id="btnFecharModalDonos" class="cancelar">
 Fechar
 </button>
 
